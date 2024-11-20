@@ -6,52 +6,86 @@
 /*   By: ufalzone <ufalzone@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:46:12 by ufalzone          #+#    #+#             */
-/*   Updated: 2024/11/18 20:18:37 by ufalzone         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:35:16 by ufalzone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdlib.h>
 #include <unistd.h>
 
 char	*get_next_line(int fd)
 {
-	static char	*stock;
+	static char	*stock = NULL;
 	char		*buffer;
 	char		*line;
+	char		*temp;
+	int			bytes_read;
 
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (!stock)
+	{
+		stock = malloc(1);
+		if (!stock)
+			return (NULL);
+		stock[0] = '\0';
+	}
 	buffer = malloc(BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
-	buffer[0] = '\0';
-	read(fd, buffer, BUFFER_SIZE);
-	stock = ft_strjoin(stock, buffer);
-	while (check_buffer(stock))
-		// tant qu'il n'y a pas de \n la chaine se rajoute apres buffer
+	bytes_read = 1;
+	while (bytes_read > 0 && check_buffer(stock))
 	{
-		read(fd, buffer, BUFFER_SIZE);
-		stock = ft_strjoin(stock, buffer);
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read <= 0)
+			break ;
+		buffer[bytes_read] = '\0';
+		temp = ft_strjoin(stock, buffer);
+		free(stock);
+		stock = temp;
 	}
-	line = extract_line(stock); 
-		// créer une nouvelle chaîne contenant les caractères jusqu'au \n inclus
-	stock = update_stock(stock);
-		// créer une nouvelle chaîne avec les caractères restants après le \n
+	free(buffer);
+	if (bytes_read < 0)
+	{
+		free(stock);
+		stock = NULL;
+		return (NULL);
+	}
+	if (bytes_read == 0 && stock[0] == '\0')
+	{
+		free(stock);
+		stock = NULL;
+		return (NULL);
+	}
+	line = extract_line(stock);
+	temp = update_stock(stock);
+	free(stock);
+	stock = temp;
+	if (!line)
+	{
+		free(stock);
+		stock = NULL;
+		return (NULL);
+	}
 	return (line);
 }
 
-#include <stdio.h>
+// #include <stdio.h>
 
-int	main(void)
-{
-	int		fd;
-	char	*str;
+// int	main(void)
+// {
+//     int     fd;
+//     char    *str;
 
-	printf("salut");
-	fd = open("test.txt", O_RDONLY);
-	while ((str = get_next_line(fd)) != NULL)
-	{
-		printf("%s", str);
-		free(str);
-	}
-	close(fd);
-	return (0);
-}
+//     fd = open("test.txt", O_RDONLY);
+//     str = get_next_line(fd);
+//     while (str != NULL)
+//     {
+//         printf("%s", str);
+//         free(str);
+//         str = get_next_line(fd);
+//     }
+//     close(fd);
+//     return (0);
+// }

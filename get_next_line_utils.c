@@ -6,7 +6,7 @@
 /*   By: ufalzone <ufalzone@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:01:38 by ufalzone          #+#    #+#             */
-/*   Updated: 2024/11/18 20:16:26 by ufalzone         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:25:12 by ufalzone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,15 @@ int	check_buffer(char *s)
 	int	i;
 
 	i = 0;
+	if (!s)
+		return (0);
 	while (s[i])
 	{
 		if (s[i] == '\n')
-			return (1);
+			return (0);
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
 int	ft_lenbuffer(char *str)
@@ -31,18 +33,24 @@ int	ft_lenbuffer(char *str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i])
+	{
+		if (str[i] == '\n')
+			return (i + 1);
 		i++;
-	return (i);
+	}
+	return (-1);
 }
 
-size_t	ft_strlen(const char *str)
+int	ft_strlen(const char *str)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
-    if (!str)
-        return (0);
+	if (!str)
+		return (0);
 	while (str[i])
 		i++;
 	return (i);
@@ -54,46 +62,59 @@ char	*extract_line(char *s1)
 	int		len_line;
 	int		i;
 
+	if (!s1)
+		return (NULL);
 	i = 0;
 	len_line = ft_lenbuffer(s1);
+	if (len_line == -1)
+		len_line = ft_strlen(s1);
 	line = malloc(sizeof(char) * (len_line + 1));
+	if (!line)
+		return (NULL);
 	line[len_line] = '\0';
 	while (i < len_line)
 	{
 		line[i] = s1[i];
 		i++;
 	}
-    return (line);
+	return (line);
 }
 
 char	*update_stock(char *s1)
 {
-	char	*stock;
-	int		update_size;
+	char	*resultat;
+	int		len_stock;
 	int		i;
+	int		j;
 
+	if (!s1)
+		return (NULL);
 	i = 0;
-	update_size = ft_strlen(s1) - ft_lenbuffer(s1);
-    i = ft_lenbuffer(s1);
-	stock = malloc(sizeof(char) * (update_size + 1));
-	stock[ft_strlen(s1)] = '\0';
-	while (s1[i])
+	j = ft_lenbuffer(s1);
+	if (j == -1)
+		return (NULL);
+	len_stock = ft_strlen(s1) - j;
+	resultat = malloc(sizeof(char) * (len_stock + 1));
+	if (!resultat)
+		return (NULL);
+	while (i < len_stock)
 	{
-		stock[i] = s1[i];
+		resultat[i] = s1[i + j];
 		i++;
 	}
-    return (stock);
+	resultat[i] = '\0';
+	return (resultat);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int size_total;
-	char *resultat;
-    int size1;
-    int size2;
-    int i;
-	int j;
+	int		size_total;
+	char	*resultat;
+	int		i;
+	int		j;
 
+	if (!s1 || !s2)
+		return (NULL);
 	size_total = (ft_strlen(s1) + ft_strlen(s2));
 	resultat = malloc(sizeof(char) * (size_total + 1));
 	if (!resultat)
@@ -113,3 +134,4 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	resultat[i + j] = '\0';
 	return (resultat);
 }
+
