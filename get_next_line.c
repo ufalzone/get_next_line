@@ -6,7 +6,7 @@
 /*   By: ufalzone <ufalzone@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:46:12 by ufalzone          #+#    #+#             */
-/*   Updated: 2024/11/20 14:35:16 by ufalzone         ###   ########.fr       */
+/*   Updated: 2024/11/21 11:23:11 by ufalzone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,52 +22,21 @@ char	*get_next_line(int fd)
 	char		*temp;
 	int			bytes_read;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || !init_stock(&stock))
 		return (NULL);
-	if (!stock)
-	{
-		stock = malloc(1);
-		if (!stock)
-			return (NULL);
-		stock[0] = '\0';
-	}
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (!buffer)
+	if (!(buffer = malloc(BUFFER_SIZE + 1)))
 		return (NULL);
 	bytes_read = 1;
 	while (bytes_read > 0 && check_buffer(stock))
-	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read <= 0)
-			break ;
-		buffer[bytes_read] = '\0';
-		temp = ft_strjoin(stock, buffer);
-		free(stock);
-		stock = temp;
-	}
+		stock = read_and_join(fd, stock, buffer, &bytes_read);
 	free(buffer);
-	if (bytes_read < 0)
-	{
-		free(stock);
-		stock = NULL;
-		return (NULL);
-	}
-	if (bytes_read == 0 && stock[0] == '\0')
-	{
-		free(stock);
-		stock = NULL;
-		return (NULL);
-	}
-	line = extract_line(stock);
+	if (bytes_read < 0 || (bytes_read == 0 && stock[0] == '\0'))
+		return (free(stock), stock = NULL, NULL);
+	if (!(line = extract_line(stock)))
+		return (free(stock), stock = NULL, NULL);
 	temp = update_stock(stock);
 	free(stock);
 	stock = temp;
-	if (!line)
-	{
-		free(stock);
-		stock = NULL;
-		return (NULL);
-	}
 	return (line);
 }
 

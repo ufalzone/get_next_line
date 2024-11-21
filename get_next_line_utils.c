@@ -6,7 +6,7 @@
 /*   By: ufalzone <ufalzone@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:01:38 by ufalzone          #+#    #+#             */
-/*   Updated: 2024/11/20 14:25:12 by ufalzone         ###   ########.fr       */
+/*   Updated: 2024/11/21 11:23:16 by ufalzone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,5 +133,32 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	}
 	resultat[i + j] = '\0';
 	return (resultat);
+}
+
+char	*read_and_join(int fd, char *stock, char *buffer, int *bytes_read)
+{
+	char	*temp;
+
+	*bytes_read = read(fd, buffer, BUFFER_SIZE);
+	if (*bytes_read > 0)
+	{
+		buffer[*bytes_read] = '\0';
+		temp = ft_strjoin(stock, buffer);
+		free(stock);
+		return (temp);
+	}
+	return (stock);
+}
+
+char	*init_stock(char **stock)
+{
+	if (!*stock)
+	{
+		*stock = malloc(1);
+		if (!*stock)
+			return (NULL);
+		(*stock)[0] = '\0';
+	}
+	return (*stock);
 }
 

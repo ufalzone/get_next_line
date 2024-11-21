@@ -6,7 +6,7 @@
 /*   By: ufalzone <ufalzone@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:01:24 by ufalzone          #+#    #+#             */
-/*   Updated: 2024/11/19 18:55:52 by ufalzone         ###   ########.fr       */
+/*   Updated: 2024/11/21 11:23:20 by ufalzone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,8 @@ int		ft_lenbuffer(char *str);
 char	*extract_line(char *stock);
 char	*update_stock(char *stock);
 char	*get_next_line(int fd);
+int		init_stock(char **stock);
+char	*read_and_join(int fd, char *stock, char *buffer, int *bytes_read);
+
+
 #endif
