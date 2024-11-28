@@ -6,7 +6,7 @@
 /*   By: ufalzone <ufalzone@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:01:24 by ufalzone          #+#    #+#             */
-/*   Updated: 2024/11/21 11:24:05 by ufalzone         ###   ########.fr       */
+/*   Updated: 2024/11/28 15:46:06 by ufalzone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
+# endif
+
+#ifndef FD_MAX
+# define FD_MAX 1024
 # endif
 
 # include <fcntl.h>
